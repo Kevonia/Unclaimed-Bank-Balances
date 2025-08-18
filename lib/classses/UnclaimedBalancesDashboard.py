@@ -6,9 +6,10 @@ import plotly.express as px
 from dash import Dash, dcc, html, dash_table, Input, Output, State
 from waitress import serve
 class UnclaimedBalancesDashboard:
-    def __init__(self, csv_path:str, default_page_size=20):
+    def __init__(self, csv_path: str, default_page_size: int,url: str):
         self.csv_path = csv_path
         self.default_page_size = default_page_size
+        self.url = url
         self.df = self.load_data()
         self.app = self.create_app()
         self.register_callbacks()
@@ -71,7 +72,7 @@ class UnclaimedBalancesDashboard:
             html.Div([
                 html.H1("Unclaimed Balances Dashboard"),
                 html.A("Source Data", 
-                    href="https://www.mof.gov.jm/wp-content/uploads/124-Pages-June-17-2025-.pdf",
+                    href=self.url,
                     target="_blank",
                     style={'margin-left': '20px', 'font-size': '16px'})
             ], style={'display': 'flex', 'align-items': 'center'}),

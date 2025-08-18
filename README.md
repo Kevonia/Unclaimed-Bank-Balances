@@ -57,7 +57,7 @@ This project provides a complete pipeline to **download**, **process**, and **an
    - Extract the data into `output/unclaimed_balances.csv`.  
    - Launch the interactive dashboard at:  
      ```
-     http://127.0.0.1:8050
+     http://127.0.0.1:8080
      ```
 
 ---
@@ -87,7 +87,7 @@ You can deploy with **Waitress**, **Gunicorn**, or **Docker** for production env
 
 Example (Gunicorn):
 ```bash
-gunicorn -w 4 -b 0.0.0.0:8050 main:server
+gunicorn -w 4 -b 0.0.0.0:8080 main:server
 ```
 
 ---

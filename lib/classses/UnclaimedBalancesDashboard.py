@@ -455,7 +455,7 @@ class UnclaimedBalancesDashboard:
         
     def run(self, host="0.0.0.0", port=None):
         """Run the Dash server"""
-        port = port or int(os.environ.get("PORT", 8050))
+        port = port or int(os.environ.get("PORT", 8080))
         serve(self.app,host=host, port=port)
         
     @property

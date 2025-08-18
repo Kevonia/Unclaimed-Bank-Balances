@@ -43,7 +43,7 @@ This project provides a complete pipeline to **download**, **process**, and **an
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/your-username/unclaimed-balances-dashboard.git
+   git clone https://github.com/Kevonia/Unclaimed-Bank-Balances
    cd unclaimed-balances-dashboard
    ```
 

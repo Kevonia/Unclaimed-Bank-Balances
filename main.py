@@ -18,6 +18,7 @@ if __name__ == "__main__":
     unclaimed_balance.save_to_csv(customer_data, output_path)
     
     dashboard = UnclaimedBalancesDashboard(output_path, default_page_size=50)
-    dashboard.run()
-    
+    app = dashboard.app
+    server = dashboard.server  # This exposes the Flask server instance
+
     

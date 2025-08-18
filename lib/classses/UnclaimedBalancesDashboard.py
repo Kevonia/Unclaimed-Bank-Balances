@@ -431,8 +431,13 @@ class UnclaimedBalancesDashboard:
         return top20[[
             "Customer Name", "Account Number", "Account Type", "Last Activity Date", "Balance", "Years Inactive"
         ]].to_dict("records")
-
+        
     def run(self, host="0.0.0.0", port=None, debug=False):
         """Run the Dash server"""
         port = port or int(os.environ.get("PORT", 8050))
         self.app.run(host=host, port=port, debug=debug)
+        
+    @property
+    def server(self):
+        """Expose the Flask server instance for Gunicorn"""
+        return self.app.server

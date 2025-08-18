@@ -12,12 +12,12 @@ output_path = root_path + "/output/unclaimed_balances.csv"
 unclaimed_balance = UnclaimedBalanceDownloader(url, pdf_fileName)
 # Initialize dashboard
 dashboard = UnclaimedBalancesDashboard(output_path, default_page_size=50, url=url)
-app = dashboard.app
-server = dashboard.server  # This is what Gunicorn needs to access
 
 # Only run directly when executed (not when imported)
 if __name__ == "__main__":
     unclaimed_balance.download_file()
     customer_data = unclaimed_balance.read_file()
     unclaimed_balance.save_to_csv(customer_data, output_path)
+    app = dashboard.app
+    server = dashboard.server  # This is what Gunicorn needs to access
     dashboard.run()

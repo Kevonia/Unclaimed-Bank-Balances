@@ -4,7 +4,7 @@ import numpy as np
 from datetime import datetime
 import plotly.express as px
 from dash import Dash, dcc, html, dash_table, Input, Output, State
-
+from waitress import serve
 class UnclaimedBalancesDashboard:
     def __init__(self, csv_path:str, default_page_size=20):
         self.csv_path = csv_path
@@ -53,6 +53,7 @@ class UnclaimedBalancesDashboard:
         app = Dash(__name__)
         app.title = "Unclaimed Balances Dashboard"
         
+        
         # Precompute options and ranges
         account_type_options = sorted(
             [{"label": t, "value": t} for t in self.df["Account Type"].dropna().unique()],
@@ -66,16 +67,26 @@ class UnclaimedBalancesDashboard:
         years_inactive_max = int(np.nanmax(self.df["Years Inactive"].fillna(0)))
         years_marks = {0: "0", years_inactive_max: str(years_inactive_max)}
 
-        app.layout = self.create_layout(
-            account_type_options,
-            balance_min,
-            balance_max,
-            balance_marks,
-            years_inactive_min,
-            years_inactive_max,
-            years_marks
-        )
-        
+        app.layout = html.Div([
+            html.Div([
+                html.H1("Unclaimed Balances Dashboard"),
+                html.A("Source Data", 
+                    href="https://www.mof.gov.jm/wp-content/uploads/124-Pages-June-17-2025-.pdf",
+                    target="_blank",
+                    style={'margin-left': '20px', 'font-size': '16px'})
+            ], style={'display': 'flex', 'align-items': 'center'}),
+            
+            self.create_layout(
+                account_type_options,
+                balance_min,
+                balance_max,
+                balance_marks,
+                years_inactive_min,
+                years_inactive_max,
+                years_marks
+            )
+        ])
+    
         return app
 
     def create_layout(self, account_type_options, balance_min, balance_max, balance_marks,
@@ -383,17 +394,27 @@ class UnclaimedBalancesDashboard:
         return fig
 
     def create_balance_hist_figure(self, filtered_df):
-        """Create the balance histogram with controlled bins and scaling"""
-        max_balance = filtered_df["Balance"].max()
-        fig = px.histogram(
-            filtered_df, 
-            x="Balance", 
-            nbins=50, 
-            title=None,
-            range_x=[0, max_balance * 1.1]  # Add 10% padding
+        """Create a balance distribution pie chart by ranges"""
+        # Define balance bins
+        bins = [0, 10000, 50000, 100000, 500000, 1_000_000, float("inf")]
+        labels = ["0–10K", "10K–50K", "50K–100K", "100K–500K", "500K–1M", "1M+"]
+
+        # Cut balances into ranges
+        balance_ranges = pd.cut(filtered_df["Balance"], bins=bins, labels=labels, right=False)
+        distribution = balance_ranges.value_counts().reset_index()
+        distribution.columns = ["Balance Range", "Count"]
+
+        # Create pie chart
+        fig = px.pie(
+            distribution,
+            names="Balance Range",
+            values="Count",
+            title="Balance Distribution (by Range)",
+            hole=0.3
         )
-        fig.update_yaxes(rangemode="tozero")
+        fig.update_traces(textposition="inside", textinfo="percent+label")
         return fig
+
 
     def create_by_year_figure(self, filtered_df):
         """Create the 'by year' line chart with consistent scaling"""
@@ -432,10 +453,10 @@ class UnclaimedBalancesDashboard:
             "Customer Name", "Account Number", "Account Type", "Last Activity Date", "Balance", "Years Inactive"
         ]].to_dict("records")
         
-    def run(self, host="0.0.0.0", port=None, debug=False):
+    def run(self, host="0.0.0.0", port=None):
         """Run the Dash server"""
         port = port or int(os.environ.get("PORT", 8050))
-        self.app.run(host=host, port=port, debug=debug)
+        serve(self.app,host=host, port=port)
         
     @property
     def server(self):

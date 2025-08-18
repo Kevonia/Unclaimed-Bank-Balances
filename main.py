@@ -21,4 +21,4 @@ if __name__ == "__main__":
     app = dashboard.app
     server = dashboard.server  # This exposes the Flask server instance
 
-    
+    dashboard.run() 

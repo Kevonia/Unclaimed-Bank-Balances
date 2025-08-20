@@ -1,10 +1,11 @@
 import re
 
 
-def extract_unclaimed_balances(text :str,account_type: str) -> list:
+def extract_unclaimed_balances(text :str,account_type: str,bank_name:str) -> list:
       """Extract unclaimed balances from the given text."""
       """ param text: str - The text to extract unclaimed balances from."""
       """ param account_type: str - The type of account (e.g., 'Savings', 'Checking')."""
+      """ param bank_name: str - The name of the bank."""
       """Returns a list of lists containing customer name, transit/account number, last activity date, and balance."""
   
       # This pattern matches:
@@ -24,6 +25,7 @@ def extract_unclaimed_balances(text :str,account_type: str) -> list:
           last_activity_date = match.group(3).strip()
           balance = match.group(4).strip()
           account_type = account_type
+          bank_name=bank_name
           results.append([customer_name, account_number, last_activity_date, balance,account_type])
       
       return results

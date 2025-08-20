@@ -2,6 +2,7 @@ import requests
 from pypdf import PdfReader
 import csv
 import os
+from lib.constants.bank_list import jamaican_banks
 from lib.utils.getpath import check_if_file_exists
 from lib.utils.helper import extract_unclaimed_balances
 
@@ -12,6 +13,7 @@ class UnclaimedBalanceDownloader:
        param path: str - The local path to save the downloaded file.
     """
     account_type = ""
+    bank_name = "Jamaican Banks"
     
     def __init__(self, url, path):
         self.url = url
@@ -73,9 +75,15 @@ class UnclaimedBalanceDownloader:
             if "CURRENT ACCOUNTS (JMD)" in text:
                 self.account_type = "Current Accounts"
             elif "SAVINGS ACCOUNTS (JMD)" in text:
-                self.account_type = "Savings Accounts"    
-                             
-            table_data = extract_unclaimed_balances(text, self.account_type),
+                self.account_type = "Savings Accounts"
+ 
+            #FIXME: Use the correct bank name from the constants
+            # For now, we will use 'BNSJ' as the bank name
+            self.bank_name=jamaican_banks['BNSJ']
+            #FIXME: Add the published date to the data
+            # For now, we will use a hardcoded date
+            published_date ='June-17-2025'                      
+            table_data = extract_unclaimed_balances(text, self.account_type,self.bank_name,published_date),
             for recond in table_data:
               for row in recond:
                 data.append(row)
@@ -98,7 +106,7 @@ class UnclaimedBalanceDownloader:
               
           with open(csv_path, 'w', newline='') as csvfile:
               writer = csv.writer(csvfile)
-              writer.writerow(['Customer Name', 'Account Number', 'Last Activity Date', 'Balance', 'Account Type'])
+              writer.writerow(['Customer Name', 'Account Number', 'Last Activity Date', 'Balance', 'Account Type', 'Bank Name','Published Date'])
               writer.writerows(data)
           print(f"Data saved to {csv_path}")
         except IOError as e:

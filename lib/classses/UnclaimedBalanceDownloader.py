@@ -4,7 +4,7 @@ import csv
 import os
 from lib.constants.bank_list import jamaican_banks
 from lib.utils.getpath import check_if_file_exists
-from lib.utils.helper import extract_unclaimed_balances
+from lib.utils.helper import extract_name_date, extract_unclaimed_balances, search_jamaican_banks
 
 
 class UnclaimedBalanceDownloader:
@@ -14,6 +14,7 @@ class UnclaimedBalanceDownloader:
     """
     account_type = ""
     bank_name = "Jamaican Banks"
+    published_date = ""
     
     def __init__(self, url, path):
         self.url = url
@@ -76,14 +77,11 @@ class UnclaimedBalanceDownloader:
                 self.account_type = "Current Accounts"
             elif "SAVINGS ACCOUNTS (JMD)" in text:
                 self.account_type = "Savings Accounts"
- 
-            #FIXME: Use the correct bank name from the constants
-            # For now, we will use 'BNSJ' as the bank name
-            self.bank_name=jamaican_banks['BNSJ']
-            #FIXME: Add the published date to the data
+            
+            self.bank_name= search_jamaican_banks(self.account_type)
             # For now, we will use a hardcoded date
-            published_date ='June-17-2025'                      
-            table_data = extract_unclaimed_balances(text, self.account_type,self.bank_name,published_date),
+            self.published_date =extract_name_date(self.url)           
+            table_data = extract_unclaimed_balances(text, self.account_type,self.bank_name,self.published_date),
             for recond in table_data:
               for row in recond:
                 data.append(row)

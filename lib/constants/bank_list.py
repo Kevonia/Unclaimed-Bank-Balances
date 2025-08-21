@@ -12,12 +12,4 @@ jamaican_banks = {
 }
 
 
-# def find_bank(search_term,jamaican_banks):
-#     search_term = search_term.upper()
-#     results = {}
-    
-#     for abbrev, full_name in jamaican_banks.items():
-#         if search_term in abbrev.upper() or search_term in full_name.upper():
-#             results[abbrev] = full_name
-    
-#     return results
+

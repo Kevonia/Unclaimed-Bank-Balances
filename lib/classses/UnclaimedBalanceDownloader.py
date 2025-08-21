@@ -13,7 +13,7 @@ class UnclaimedBalanceDownloader:
        param path: str - The local path to save the downloaded file.
     """
     account_type = ""
-    bank_name = "Jamaican Banks"
+    bank_name = ""
     published_date = ""
     
     def __init__(self, url, path):
@@ -78,7 +78,10 @@ class UnclaimedBalanceDownloader:
             elif "SAVINGS ACCOUNTS (JMD)" in text:
                 self.account_type = "Savings Accounts"
             
-            self.bank_name= search_jamaican_banks(self.account_type)
+            temp_name= search_jamaican_banks(self.account_type)
+            if temp_name:
+                self.bank_name = temp_name
+                
             # For now, we will use a hardcoded date
             self.published_date =extract_name_date(self.url)           
             table_data = extract_unclaimed_balances(text, self.account_type,self.bank_name,self.published_date),

@@ -47,6 +47,7 @@ def extract_name_date(name :str) -> list:
 def search_jamaican_banks(search_term):
     """
     Search Jamaican banks dictionary with partial matching.
+    Extracts bank codes from the search term and ignores additional text.
     param: search_term (str): The term to search for (case-insensitive)
     Returns:
         dict: Dictionary of matching banks {code: full_name} or empty dict if no matches
@@ -54,14 +55,18 @@ def search_jamaican_banks(search_term):
     search_term = search_term.lower().strip()
     matches = {}
     
-    for code, full_name in jamaican_banks.items():
-        # Check if search term matches code (case-insensitive)
-        if search_term in code.lower():
-            matches[code] = full_name
-            continue
-        
-        # Check if search term matches any part of full name (case-insensitive)
-        if re.search(search_term, full_name.lower()):
-            matches[code] = full_name
+    # First, try to extract bank codes from the search term
+    for bank_code in jamaican_banks.keys():
+        # Check if any bank code appears in the search term (case-insensitive)
+        if bank_code.lower() in search_term:
+            matches[bank_code] = jamaican_banks[bank_code]
+    
+    # If no bank codes found, try partial matching with bank names
+    if not matches:
+        for code, full_name in jamaican_banks.items():
+            # Check if search term contains any part of bank name or vice versa
+            if (any(word in search_term for word in full_name.lower().split()) or
+                any(word in full_name.lower() for word in search_term.split())):
+                matches[code] = full_name
     
     return matches

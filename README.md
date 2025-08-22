@@ -22,6 +22,7 @@ This project provides a complete pipeline to **download**, **process**, and **an
 │   │   └── UnclaimedBalancesDashboard.py   # Creates Plotly/Dash dashboard
 │   └── utils/
 │       └── getpath.py                      # Utility for project root resolution
+        └── helper.py                       # Utility for extract info from string
 ├── download/                               # Stores downloaded PDF files
 ├── output/                                 # Stores processed CSV files
 ├── main.py                                 # Entry point (pipeline + dashboard runner)
